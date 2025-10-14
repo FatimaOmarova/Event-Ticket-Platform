@@ -3,10 +3,14 @@ package com.eventhub.tickets.domain;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -23,41 +27,35 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
-@Table(name = "users")
+@Table(name = "tickets")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class Ticket {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TicketStatusEnum status;
 
-    @Column(name = "email", nullable = false)
-    private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_type_id")
+    private TicketType ticketType;
 
-    @OneToMany(mappedBy = "organized", cascade = CascadeType.ALL)
-    private List<Event> organizedEvents = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "purchaser_id")
+    private User purchaser;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_attending_events",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
-    )
-    private List<Event> attendingEvents = new ArrayList<>();
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+    private List<TicketValidation> validations = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_staffing_events",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
-    )
-    private List<Event>staffingEvents = new ArrayList<>();
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+    private List<QrCode> qrCodes = new ArrayList<>();
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
@@ -72,15 +70,14 @@ public class User {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(createdAt, user.createdAt) &&
-                Objects.equals(updatedAt, user.updatedAt);
+        Ticket ticket = (Ticket) o;
+        return Objects.equals(id, ticket.id) && status == ticket.status &&
+                Objects.equals(createdAt, ticket.createdAt) &&
+                Objects.equals(updatedAt, ticket.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, createdAt, updatedAt);
+        return Objects.hash(id, status, createdAt, updatedAt);
     }
 }

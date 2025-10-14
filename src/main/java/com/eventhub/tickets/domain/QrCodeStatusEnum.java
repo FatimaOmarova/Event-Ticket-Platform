@@ -1,5 +1,5 @@
 package com.eventhub.tickets.domain;
 
-public enum QrStatusEnum {
+public enum QrCodeStatusEnum {
     ACTIVE, EXPIRED
 }
