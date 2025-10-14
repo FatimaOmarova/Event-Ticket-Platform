@@ -1,7 +1,7 @@
 package com.eventhub.tickets.filters;
 
 import com.eventhub.tickets.repository.UserRepository;
-import com.eventhub.tickets.domain.User;
+import com.eventhub.tickets.domain.entity.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

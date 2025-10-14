@@ -1,4 +1,4 @@
-package com.eventhub.tickets.domain;
+package com.eventhub.tickets.domain.entity;
 
 public enum TicketStatusEnum {
     PURCHASED, CANCELLED

@@ -1,4 +1,4 @@
-package com.eventhub.tickets.domain;
+package com.eventhub.tickets.domain.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
