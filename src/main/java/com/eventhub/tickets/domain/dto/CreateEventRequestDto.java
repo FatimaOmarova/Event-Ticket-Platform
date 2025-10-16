@@ -1,6 +1,6 @@
 package com.eventhub.tickets.domain.dto;
 
-import com.eventhub.tickets.domain.entity.EventStatusEnum;
+import com.eventhub.tickets.domain.enums.EventStatusEnum;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -35,5 +35,5 @@ public class CreateEventRequestDto {
 
     @NotEmpty(message = "At least one ticket type is required")
     @Valid
-    private List<CreateEventRequestDto> ticketTypes;
+    private List<CreateTicketTypeRequestDto> ticketTypes;
 }

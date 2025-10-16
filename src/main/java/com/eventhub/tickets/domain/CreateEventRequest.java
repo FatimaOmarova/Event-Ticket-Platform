@@ -1,7 +1,6 @@
 package com.eventhub.tickets.domain;
 
-import com.eventhub.tickets.domain.entity.EventStatusEnum;
-import com.eventhub.tickets.domain.entity.User;
+import com.eventhub.tickets.domain.enums.EventStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
