@@ -8,7 +8,10 @@ import com.eventhub.tickets.exceptions.UserNotFoundException;
 import com.eventhub.tickets.repository.EventRepository;
 import com.eventhub.tickets.repository.UserRepository;
 import com.eventhub.tickets.service.EventService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,5 +55,15 @@ public class EventServiceImpl implements EventService {
         eventToCreate.setTicketTypes(ticketTypesToCreate);
 
         return eventRepository.save(eventToCreate);
+    }
+
+    @Override
+    public Page<Event> listEventsByOrganizer(UUID organizerId, Pageable pageable) {
+        return eventRepository.findByOrganizerId(organizerId, pageable);
+    }
+
+    @Override
+    public Optional<Event> getEventForOrganizer(UUID organizerId, UUID id) {
+        return eventRepository.findByIdAndOrganizerId(id, organizerId);
     }
 }
