@@ -2,15 +2,10 @@ package com.eventhub.tickets.mappers;
 
 import com.eventhub.tickets.domain.CreateEventRequest;
 import com.eventhub.tickets.domain.CreateTicketTypeRequest;
-import com.eventhub.tickets.domain.dto.CreateEventRequestDto;
-import com.eventhub.tickets.domain.dto.CreateEventResponseDto;
-import com.eventhub.tickets.domain.dto.CreateTicketTypeRequestDto;
-import com.eventhub.tickets.domain.dto.GetEventDetailsResponseDto;
-import com.eventhub.tickets.domain.dto.GetEventTicketTypesResponseDto;
-import com.eventhub.tickets.domain.dto.ListEventResponseDto;
-import com.eventhub.tickets.domain.dto.ListEventTicketTypeResponseDto;
+import com.eventhub.tickets.domain.UpdateEventRequest;
+import com.eventhub.tickets.domain.UpdateTicketTypeRequest;
+import com.eventhub.tickets.domain.dto.*;
 import com.eventhub.tickets.domain.entity.Event;
-
 import com.eventhub.tickets.domain.entity.TicketType;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -39,4 +34,9 @@ public interface EventMapper {
 
     UpdateEventResponseDto toUpdateEventResponseDto(Event event);
 
+    ListPublishedEventResponseDto toListPublishedEventResponseDto(Event event);
+
+    GetPublishedEventDetailsTicketTypesResponseDto toGetPublishedEventDetailsTicketTypesResponseDto(TicketType ticketType);
+
+    GetPublishedEventDetailsResponseDto toGetPublishedEventDetailsResponseDto(Event event);
 }

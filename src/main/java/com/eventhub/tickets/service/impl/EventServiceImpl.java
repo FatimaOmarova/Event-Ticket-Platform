@@ -6,6 +6,7 @@ import com.eventhub.tickets.domain.UpdateTicketTypeRequest;
 import com.eventhub.tickets.domain.entity.Event;
 import com.eventhub.tickets.domain.entity.TicketType;
 import com.eventhub.tickets.domain.entity.User;
+import com.eventhub.tickets.domain.enums.EventStatusEnum;
 import com.eventhub.tickets.exceptions.EventUpdateException;
 import com.eventhub.tickets.exceptions.TicketTypeNotFoundException;
 import com.eventhub.tickets.exceptions.UserNotFoundException;
@@ -136,5 +137,20 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public void deleteEventForOrganizer(UUID organizerId, UUID id) {
         getEventForOrganizer(organizerId, id).ifPresent(eventRepository::delete);
+    }
+
+    @Override
+    public Page<Event> listPublishedEvents(Pageable pageable) {
+        return eventRepository.findByStatus(EventStatusEnum.PUBLISHED, pageable);
+    }
+
+    @Override
+    public Page<Event> searchPublishedEvents(String query, Pageable pageable) {
+        return eventRepository.searchEvents(query, pageable);
+    }
+
+    @Override
+    public Optional<Event> getPublishedEvent(UUID id) {
+        return eventRepository.findByIdAndStatus(id, EventStatusEnum.PUBLISHED);
     }
 }
