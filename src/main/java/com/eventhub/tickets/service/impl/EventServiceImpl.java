@@ -13,19 +13,14 @@ import com.eventhub.tickets.repository.EventRepository;
 import com.eventhub.tickets.repository.UserRepository;
 import com.eventhub.tickets.service.EventService;
 import jakarta.transaction.Transactional;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -113,10 +108,21 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toMap(TicketType::getId, Function.identity()));
         for (UpdateTicketTypeRequest ticketType : event.getTicketTypes()) {
             if(ticketType.getId() == null) {
-                //create
+                TicketType ticketTypeToCreate = new TicketType();
+                ticketTypeToCreate.setName(ticketType.getName());
+                ticketTypeToCreate.setPrice(ticketType.getPrice());
+                ticketTypeToCreate.setDescription(ticketType.getDescription());
+                ticketTypeToCreate.setTotalAvailable(ticketType.getTotalAvailable());
+                ticketTypeToCreate.setEvent(existingEvent);
+                existingEvent.getTicketTypes().add(ticketTypeToCreate);
+
             }else if(existingTicketTypesIndex.containsKey(ticketType.getId())){
-                    //update
-                }
+                    TicketType existingTicketType = existingTicketTypesIndex.get(ticketType.getId());
+                    existingTicketType.setName(ticketType.getName());
+                    existingTicketType.setPrice(ticketType.getPrice());
+                    existingTicketType.setDescription(ticketType.getDescription());
+                    existingTicketType.setTotalAvailable(ticketType.getTotalAvailable());
+            }
             else{
             throw new TicketTypeNotFoundException(String.format("Ticket type with ID '%s' not found in event with ID '%s'", ticketType.getId()
         ));
@@ -124,5 +130,11 @@ public class EventServiceImpl implements EventService {
             }
         }
         return eventRepository.save(existingEvent);
+    }
+
+    @Override
+    @Transactional
+    public void deleteEventForOrganizer(UUID organizerId, UUID id) {
+        getEventForOrganizer(organizerId, id).ifPresent(eventRepository::delete);
     }
 }
