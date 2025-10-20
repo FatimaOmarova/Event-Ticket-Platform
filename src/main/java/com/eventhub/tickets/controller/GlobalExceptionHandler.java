@@ -4,6 +4,7 @@ import com.eventhub.tickets.domain.dto.ErrorDto;
 import com.eventhub.tickets.domain.entity.User;
 import com.eventhub.tickets.exceptions.EventNotFoundException;
 import com.eventhub.tickets.exceptions.EventUpdateException;
+import com.eventhub.tickets.exceptions.QrCodeGenerationException;
 import com.eventhub.tickets.exceptions.TicketTypeNotFoundException;
 import com.eventhub.tickets.exceptions.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -21,6 +22,14 @@ import java.util.List;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(QrCodeGenerationException.class)
+    public ResponseEntity<ErrorDto> handleQrCodeGenerationException(QrCodeGenerationException ex){
+        log.error("Caught QrCodeGenerationException", ex);
+        ErrorDto errorDto = new ErrorDto();
+        errorDto.setError("Unable to generate QR code");
+        return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(EventUpdateException.class)
     public ResponseEntity<ErrorDto> handleEventUpdateException(EventUpdateException ex){
