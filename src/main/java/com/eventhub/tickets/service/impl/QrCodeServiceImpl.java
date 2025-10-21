@@ -4,6 +4,7 @@ import com.eventhub.tickets.domain.entity.QrCode;
 import com.eventhub.tickets.domain.entity.Ticket;
 import com.eventhub.tickets.domain.enums.QrCodeStatusEnum;
 import com.eventhub.tickets.exceptions.QrCodeGenerationException;
+import com.eventhub.tickets.exceptions.QrCodeNotFoundException;
 import com.eventhub.tickets.repository.QrCodeRepository;
 import com.eventhub.tickets.service.QrCodeService;
 import com.google.zxing.BarcodeFormat;
@@ -11,17 +12,20 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.UUID;
-import javax.imageio.ImageIO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class QrCodeServiceImpl implements QrCodeService{
     public static final int QR_HEIGHT = 300;
     public static final int QR_WIDTH = 300;
@@ -48,6 +52,20 @@ public class QrCodeServiceImpl implements QrCodeService{
 
 
     }
+
+    @Override
+    public byte[] getQrCodeImageForUserAndTicket(UUID userId, UUID ticketId) {
+        QrCode qrCode = qrCodeRepository.findByTicketIdAndPurchaseId(ticketId, userId)
+                .orElseThrow(QrCodeNotFoundException::new);
+
+        try{
+            return Base64.getDecoder().decode(qrCode.getValue());
+        }catch (IllegalArgumentException ex){
+            log.error("Invalid base64 QR Code for ticket ID: {}", ticketId, ex);
+            throw new QrCodeNotFoundException();
+        }
+    }
+
     private String generateQrCodeImage(UUID uniqueId) throws WriterException, IOException {
         BitMatrix bitMatrix = qrCodeWriter.encode(
                 uniqueId.toString(),
