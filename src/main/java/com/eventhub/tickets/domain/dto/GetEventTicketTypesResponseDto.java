@@ -1,10 +1,11 @@
 package com.eventhub.tickets.domain.dto;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class GetEventTicketTypesResponseDto {
     private UUID id;
     private String name;
-    private double price;
+    private Double price;
     private String description;
     private Integer totalAvailable;
     private LocalDateTime createdAt;

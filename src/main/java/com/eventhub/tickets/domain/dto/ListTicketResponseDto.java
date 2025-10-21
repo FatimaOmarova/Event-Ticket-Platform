@@ -1,5 +1,6 @@
 package com.eventhub.tickets.domain.dto;
 
+import com.eventhub.tickets.domain.enums.TicketStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,9 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetPublishedEventDetailsTicketTypesResponseDto {
+public class ListTicketResponseDto {
     private UUID id;
-    private String name;
-    private Double price;
-    private String description;
+    private TicketStatusEnum status;
+    private ListTicketTicketTypeResponseDto ticketType;
 }
+
