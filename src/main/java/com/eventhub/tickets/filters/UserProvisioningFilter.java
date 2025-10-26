@@ -1,7 +1,7 @@
 package com.eventhub.tickets.filters;
 
-import com.eventhub.tickets.repository.UserRepository;
 import com.eventhub.tickets.domain.entity.User;
+import com.eventhub.tickets.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +21,7 @@ import java.util.UUID;
 public class UserProvisioningFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepository;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -29,20 +30,20 @@ public class UserProvisioningFilter extends OncePerRequestFilter {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication != null
+        if (authentication != null
                 && authentication.isAuthenticated()
-                && authentication.getPrincipal() instanceof Jwt jwt){
+                && authentication.getPrincipal() instanceof Jwt jwt) {
 
             UUID keycloackId = UUID.fromString(jwt.getSubject());
 
-            if(!userRepository.existsById(keycloackId)){
+            if (!userRepository.existsById(keycloackId)) {
                 User user = new User();
                 user.setId(keycloackId);
                 user.setName(jwt.getClaimAsString("preferred_username"));
                 user.setEmail(jwt.getClaimAsString("email"));
                 userRepository.save(user);
             }
-            filterChain.doFilter(request, response);
         }
+        filterChain.doFilter(request, response);
     }
 }
